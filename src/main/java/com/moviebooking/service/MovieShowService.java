@@ -54,26 +54,25 @@ public class MovieShowService {
             throw new BookingException("End time must be after start time");
         }
 
-        Show show = Show.builder()
+        Show savedShow = showRepository.save(Show.builder()
                 .screen(screen)
                 .movie(movie)
                 .startTime(req.getStartTime())
                 .endTime(req.getEndTime())
-                .build();
-        show = showRepository.save(show);
+                .build());
 
         // Create ShowSeat rows for every seat in the screen
         List<Seat> seats = seatRepository.findByScreenId(screen.getId());
         List<ShowSeat> showSeats = seats.stream()
                 .map(seat -> ShowSeat.builder()
-                        .show(show)
+                        .show(savedShow)
                         .seat(seat)
                         .status(ShowSeatStatus.AVAILABLE)
                         .build())
                 .toList();
         showSeatRepository.saveAll(showSeats);
 
-        return show;
+        return savedShow;
     }
 
     @Transactional
