@@ -1,0 +1,22 @@
+spring:
+  datasource:
+    url: jdbc:tc:postgresql:15:///moviebooking_test
+    username: test
+    password: test
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+  flyway:
+    enabled: true
+  jpa:
+    hibernate:
+      ddl-auto: validate
+
+app:
+  jwt:
+    secret: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+    expiration-ms: 3600000
+  booking:
+    hold-ttl-minutes: 1
+  payment:
+    mock-failure-rate: 0.0
+  reminder:
+    hours-before-show: 24
