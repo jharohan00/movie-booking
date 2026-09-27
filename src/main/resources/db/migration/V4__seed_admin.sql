@@ -1,7 +1,8 @@
 -- V4: Default admin user
--- BCrypt hash of 'Admin@123' (strength 10)
+-- BCrypt(10) hash of the string: password
+-- Change this before deploying to production!
 INSERT INTO users (email, password, full_name, role)
 VALUES ('admin@moviebooking.com',
-        '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy',
+        '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
         'System Admin',
         'ADMIN');

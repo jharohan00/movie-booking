@@ -104,13 +104,31 @@ src/main/java/com/moviebooking/
 CREATE DATABASE moviebooking;
 ```
 
-### 2. Configure credentials (optional — defaults shown)
+### 2. Configure environment variables
+
+Configure database connection and JWT security settings. You can export them directly in your shell or use the provided `.env.example`:
 
 ```bash
+# Optional: Database configuration (defaults shown)
+export DB_URL=jdbc:postgresql://localhost:5432/moviebooking
 export DB_USERNAME=postgres
 export DB_PASSWORD=postgres
-export JWT_SECRET=404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+
+# Required: Generate a secure 256-bit Base64-encoded secret for JWT signing
+export JWT_SECRET=$(openssl rand -base64 32)
 ```
+
+Alternatively, copy `.env.example`:
+```bash
+cp .env.example .env
+# Edit .env, then export its variables:
+export $(cat .env | grep -v '^#' | xargs)
+```
+
+> **Security Note:**
+> - Never commit actual secrets or `.env` files to Git (already excluded in `.gitignore`).
+> - `JWT_SECRET` is **mandatory**; the application fails fast at startup if it is not provided.
+> - JJWT requires a Base64-encoded key of at least 256 bits (32 raw bytes). Use `openssl rand -base64 32` to generate one.
 
 ### 3. Start the application
 
@@ -214,8 +232,13 @@ Integration tests use Testcontainers which automatically pulls and starts a Post
 
 | Property | Default | Description |
 |----------|---------|-------------|
+| `app.jwt.secret` | `${JWT_SECRET}` *(Required)* | Base64-encoded HMAC secret (min 256 bits) |
+| `app.jwt.expiration-ms` | `86400000` | JWT validity in ms (24 hours) |
+| `spring.datasource.url` | `jdbc:postgresql://localhost:5432/moviebooking` | PostgreSQL JDBC URL (`DB_URL`) |
+| `spring.datasource.username` | `postgres` | Database username (`DB_USERNAME`) |
+| `spring.datasource.password` | `postgres` | Database password (`DB_PASSWORD`) |
 | `app.booking.hold-ttl-minutes` | `10` | Seat hold TTL |
 | `app.booking.sweeper-interval-ms` | `60000` | Hold expiry sweeper interval |
 | `app.payment.mock-failure-rate` | `0.0` | Payment failure probability (0.0–1.0) |
 | `app.reminder.hours-before-show` | `24` | Hours before show to send reminder |
-| `app.jwt.expiration-ms` | `86400000` | JWT validity (ms) |
+
